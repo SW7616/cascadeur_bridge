@@ -72,7 +72,7 @@ def export_fbx(file_path: str) -> None:
 
 def get_actions_from_armatures(selected_objects: list) -> list:
     """
-    Get the actions from all of the selected objects in Blender.
+    Get the actions from all of the selected armatures in Blender.
 
     :param list selected_objects: List of selected objects
     :return list: List of obj.animation_data.action objects
@@ -85,6 +85,21 @@ def get_actions_from_armatures(selected_objects: list) -> list:
                 actions.append(action)
             else:
                 bpy.data.actions.remove(action)
+    return actions
+
+
+def get_actions_from_objects(selected_objects: list) -> dict:
+    """
+    Get the actions from all of the selected objects in Blender.
+
+    :param list selected_objects: List of selected objects
+    :return dict: Dictionary of object name and the corresponding obj.animation_data.action objects
+    """
+    actions = {}
+    for obj in selected_objects:
+        if hasattr(obj.animation_data, "action"):
+            action = obj.animation_data.action
+            actions[obj.name] = action
     return actions
 
 
@@ -128,6 +143,20 @@ def apply_action(
     if not hasattr(armature.animation_data, "action"):
         armature.animation_data_create()
     armature.animation_data.action = action
+
+
+def apply_actions(actions: dict, action_name: str = "csc_action") -> None:
+    """
+    _summary_
+
+    :param dict actions: _description_
+    :param str action_name: _description_, defaults to csc_action
+    :return _type_: _description_
+    """
+    # 1. check if there are duplicated names without suffixes
+    # 2. Remove suffixes or fix if there are duplicated
+    # 3. Search for obj with the given name, apply action
+    pass
 
 
 class OperatorBaseClass(bpy.types.Operator):
